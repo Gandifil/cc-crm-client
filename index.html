@@ -16,16 +16,14 @@
   <body>
     <div id="app" v-cloak>
       <b-container fluid>
-        <b-row class="mt-5">
-          <b-col cols="3">   <a class="forgottenPassword" @click="registration = false; signIn = true; setIndication = false;">Войти</a>
+        <b-row class="mt-5" v-show="state == unlogined">
+          <b-col>   <a class="forgottenPassword" @click="currentWindow = 'signIn';">Войти</a>
           </b-col>
-          <b-col cols="3">   <a class="forgottenPassword" @click="registration = true; signIn = false; setIndication = false;">Зарегистрироваться</a>
-          </b-col>
-          <b-col cols="5">   <a class="forgottenPassword" @click="registration = false; signIn = false; setIndication = true;">Передать показания</a>
+          <b-col>   <a class="forgottenPassword" @click="currentWindow = 'registration';">Зарегистрироваться</a>
           </b-col>
         </b-row>
 
-        <div class="rectangle" v-show="signIn">
+        <div class="rectangle" v-show="currentWindow == 'signIn'">
           <b-row>
             <b-col class="title text-center">
               Авторизация
@@ -61,7 +59,7 @@
       		</b-row>
         </div>
 
-        <div class="indication" v-show="setIndication">
+        <div class="indication" v-show="currentWindow == 'setIndaction'">
           <b-row>
             <b-col class="title text-center">
               Показания
@@ -103,18 +101,6 @@
             </b-col>
           </b-row>
 
-          <b-row >
-            <b-col >
-              <p class="subtitle">Итого</p>
-            </b-col>
-          </b-row>
-
-          <b-row >
-            <b-col >
-              <input type="text" class="totalInput" name="totalInput" id="totalInput" value="" placeholder="200.00">
-            </b-col>
-          </b-row>
-
           <b-row>
       			<b-col>
       				<button type="button" class="setIndication">Передать показания</button>
@@ -123,7 +109,7 @@
 
         </div>
 
-        <div class="registration" v-show="registration">
+        <div class="registration" v-show="currentWindow == 'registration'">
           <b-row>
             <b-col class="title text-center">
               Регистрация
@@ -192,14 +178,19 @@
 <script src="https://unpkg.com/@babel/polyfill@latest/dist/polyfill.min.js"></script>
 <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
 <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+<script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 
 <script>
+const unlogined = 0;
+const loginedByUser = 1;
+const loginedByAdmin = 2;
+
 window.app = new Vue({
   el: "#app",
   data:
   {
-    signIn:false,
-    setIndication:false,
-    registration:false,
+	state: unlogined,
+    currentWindow: 'signIn'
   }})
+
 </script>
