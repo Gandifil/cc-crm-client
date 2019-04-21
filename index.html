@@ -26,7 +26,7 @@
         <b-row class="mt-5" v-show="state == loginedByUser">
           <b-col>   <a class="forgottenPassword" @click="currentWindow = 'setIndaction';">Подать показания</a>
           </b-col>
-          <b-col>   <a class="forgottenPassword" @click="currentWindow = 'showIndactions';">История показаний</a>
+          <b-col>   <a class="forgottenPassword" @click="currentWindow = 'showIndactions'; btnShowIndaction();">История показаний</a>
           </b-col>
         </b-row>
 
@@ -177,6 +177,16 @@
 
         </div>
 
+
+        <div class="indication" v-show="currentWindow == 'showIndaction'">
+          <b-row>
+            <b-col class="title text-center">
+              Таблица показаний
+            </b-col>
+          </b-row>
+
+        </div>
+
       </b-container>
     </div>
 </body>
@@ -187,4 +197,5 @@
 <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="js/constants.js"></script>
+<script src="js/request-proxy.js"></script>
 <script src="js/vue-app.js"></script>
