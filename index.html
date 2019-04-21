@@ -16,16 +16,21 @@
   <body>
     <div id="app" v-cloak>
       <b-container fluid>
-        <b-row class="mt-5">
-          <b-col cols="3">   <a class="forgottenPassword" @click="registration = false; signIn = true; setIndication = false;">Войти</a>
+        <b-row class="mt-5" v-show="state == unlogined">
+          <b-col>   <a class="forgottenPassword" @click="currentWindow = 'signIn';">Войти</a>
           </b-col>
-          <b-col cols="3">   <a class="forgottenPassword" @click="registration = true; signIn = false; setIndication = false;">Зарегистрироваться</a>
-          </b-col>
-          <b-col cols="5">   <a class="forgottenPassword" @click="registration = false; signIn = false; setIndication = true;">Передать показания</a>
+          <b-col>   <a class="forgottenPassword" @click="currentWindow = 'registration';">Зарегистрироваться</a>
           </b-col>
         </b-row>
 
-        <div class="rectangle" v-show="signIn">
+        <b-row class="mt-5" v-show="state == loginedByUser">
+          <b-col>   <a class="forgottenPassword" @click="currentWindow = 'setIndaction';">Подать показания</a>
+          </b-col>
+          <b-col>   <a class="forgottenPassword" @click="currentWindow = 'showIndactions';">История показаний</a>
+          </b-col>
+        </b-row>
+
+        <div class="rectangle" v-show="currentWindow == 'signIn'">
           <b-row>
             <b-col class="title text-center">
               Авторизация
@@ -56,12 +61,12 @@
 
           <b-row>
       			<b-col>
-      				<button type="button" class="signIn">Войти</button>
+      				<button type="button" class="signIn" @click="btnLogin">Войти</button>
       			</b-col>
       		</b-row>
         </div>
 
-        <div class="indication" v-show="setIndication">
+        <div class="indication" v-show="currentWindow == 'setIndaction'">
           <b-row>
             <b-col class="title text-center">
               Показания
@@ -103,27 +108,15 @@
             </b-col>
           </b-row>
 
-          <b-row >
-            <b-col >
-              <p class="subtitle">Итого</p>
-            </b-col>
-          </b-row>
-
-          <b-row >
-            <b-col >
-              <input type="text" class="totalInput" name="totalInput" id="totalInput" value="" placeholder="200.00">
-            </b-col>
-          </b-row>
-
           <b-row>
       			<b-col>
-      				<button type="button" class="setIndication">Передать показания</button>
+      				<button type="button" class="setIndication" @click="btnSetIndaction">Передать показания</button>
       			</b-col>
       		</b-row>
 
         </div>
 
-        <div class="registration" v-show="registration">
+        <div class="registration" v-show="currentWindow == 'registration'">
           <b-row>
             <b-col class="title text-center">
               Регистрация
@@ -192,14 +185,83 @@
 <script src="https://unpkg.com/@babel/polyfill@latest/dist/polyfill.min.js"></script>
 <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
 <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 <script>
+//
+const unlogined = 0;
+const loginedByUser = 1;
+const loginedByAdmin = 2;
+const server = 'http://cc-crm-server-cc-crm-server.1d35.starter-us-east-1.openshiftapps.com';
+
 window.app = new Vue({
   el: "#app",
   data:
   {
-    signIn:false,
-    setIndication:false,
-    registration:false,
-  }})
+	state: unlogined,
+    currentWindow: 'signIn',
+    token: '',
+  },
+  methods: {
+    btnLogin: function (event) {
+      username = document.getElementById("login").value;
+      password = document.getElementById("password").value;
+
+      axios.post(server + '/auth/login',
+        {
+          username: username,
+          password: password,
+        },
+        {
+          headers:
+                  {
+                    'Content-Type': 'application/json'
+                  }
+        }
+      )
+      .then(response => {
+        this.token = response.data.token;
+        this.state = loginedByUser;
+        this.currentWindow = 'setIndaction';
+      })
+      .catch(e => {
+        console.error(e.message);
+      });
+    },
+    btnSetIndaction: function () {
+      hotWater = document.getElementById("hotWater").value;
+      coldWater = document.getElementById("coldWater").value;
+      light = document.getElementById("light").value;
+
+      axios.post(server + '/meters/send',
+              {
+                hot_water: hotWater,
+                cold_water: coldWater,
+                electricity: light,
+              },
+              {
+                headers:
+                        {
+                          'Content-Type': 'application/json',
+                          'Authorization': "Bearer " + this.token,
+                        }
+              }
+      )
+              .then(response => {
+              })
+              .catch(e => {
+                console.error(e.message);
+              });
+    }
+  }});
+
+function setLoginState(response){
+}
+
+function tryLogin(username, password) {
+}
+
+function btnLogin(){
+    tryLogin(username, password);
+}
 </script>
