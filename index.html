@@ -12,7 +12,32 @@
     href="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.css"
   />
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&amp;subset=cyrillic" rel="stylesheet">
+  <link rel="stylesheet" href="css/grid.css" />
 </head>
+
+<!-- component template -->
+<script type="text/x-template" id="grid-template">
+  <table>
+    <thead>
+    <tr>
+      <th v-for="key in columns"
+          @click="sortBy(key)"
+          :class="{ active: sortKey == key }">
+        {{ key | capitalize }}
+        <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'">
+          </span>
+      </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr v-for="entry in filteredHeroes">
+      <td v-for="key in columns">
+        {{entry[key]}}
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</script>
   <body>
     <div id="app" v-cloak>
       <b-container fluid>
@@ -26,7 +51,7 @@
         <b-row class="mt-5" v-show="state == loginedByUser">
           <b-col>   <a class="forgottenPassword" @click="currentWindow = 'setIndaction';">Подать показания</a>
           </b-col>
-          <b-col>   <a class="forgottenPassword" @click="currentWindow = 'showIndactions'; btnShowIndaction();">История показаний</a>
+          <b-col>   <a class="forgottenPassword" @click="btnShowIndaction(); currentWindow = 'showIndactions';">История показаний</a>
           </b-col>
         </b-row>
 
@@ -178,12 +203,22 @@
         </div>
 
 
-        <div class="indication" v-show="currentWindow == 'showIndaction'">
+        <div class="indication" v-show="currentWindow == 'showIndactions'">
           <b-row>
             <b-col class="title text-center">
               Таблица показаний
             </b-col>
           </b-row>
+
+          <!-- demo root element -->
+          <form id="search">
+            Search <input name="query" v-model="searchQuery">
+          </form>
+          <demo-grid ref="indications_grid"
+                  :heroes="gridData"
+                  :columns="gridColumns"
+                  :filter-key="searchQuery">
+          </demo-grid>
 
         </div>
 
@@ -198,4 +233,5 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="js/constants.js"></script>
 <script src="js/request-proxy.js"></script>
+<script src="js/grid.js"></script>
 <script src="js/vue-app.js"></script>
