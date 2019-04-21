@@ -128,7 +128,7 @@
               <img src="pub/img/user.svg" height="30px" width="30px" >
             </b-col>
             <b-col cols="5">
-              <input type="text" class="crmInput" name="login" id="login" value="" placeholder="Логин">
+              <input type="text" class="crmInput" name="login" id="reg_login" value="" placeholder="Логин">
             </b-col>
           </b-row>
 
@@ -137,7 +137,7 @@
               <img src="pub/img/key.svg" height="30px" width="30px" >
             </b-col>
             <b-col cols="5">
-              <input type="text" class="crmInput" name="password" id="password" value="" placeholder="Пароль">
+              <input type="text" class="crmInput" name="password" id="reg_password" value="" placeholder="Пароль">
             </b-col>
           </b-row>
 
@@ -171,7 +171,7 @@
 
           <b-row>
       			<b-col>
-      				<button type="button" class="regButton">Зарегистрироваться</button>
+      				<button type="button" class="regButton" @click="btnRegist">Зарегистрироваться</button>
       			</b-col>
       		</b-row>
 
@@ -186,82 +186,5 @@
 <script src="https://unpkg.com/vue@latest/dist/vue.min.js"></script>
 <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-
-<script>
-//
-const unlogined = 0;
-const loginedByUser = 1;
-const loginedByAdmin = 2;
-const server = 'http://cc-crm-server-cc-crm-server.1d35.starter-us-east-1.openshiftapps.com';
-
-window.app = new Vue({
-  el: "#app",
-  data:
-  {
-	state: unlogined,
-    currentWindow: 'signIn',
-    token: '',
-  },
-  methods: {
-    btnLogin: function (event) {
-      username = document.getElementById("login").value;
-      password = document.getElementById("password").value;
-
-      axios.post(server + '/auth/login',
-        {
-          username: username,
-          password: password,
-        },
-        {
-          headers:
-                  {
-                    'Content-Type': 'application/json'
-                  }
-        }
-      )
-      .then(response => {
-        this.token = response.data.token;
-        this.state = loginedByUser;
-        this.currentWindow = 'setIndaction';
-      })
-      .catch(e => {
-        console.error(e.message);
-      });
-    },
-    btnSetIndaction: function () {
-      hotWater = document.getElementById("hotWater").value;
-      coldWater = document.getElementById("coldWater").value;
-      light = document.getElementById("light").value;
-
-      axios.post(server + '/meters/send',
-              {
-                hot_water: hotWater,
-                cold_water: coldWater,
-                electricity: light,
-              },
-              {
-                headers:
-                        {
-                          'Content-Type': 'application/json',
-                          'Authorization': "Bearer " + this.token,
-                        }
-              }
-      )
-              .then(response => {
-              })
-              .catch(e => {
-                console.error(e.message);
-              });
-    }
-  }});
-
-function setLoginState(response){
-}
-
-function tryLogin(username, password) {
-}
-
-function btnLogin(){
-    tryLogin(username, password);
-}
-</script>
+<script src="js/constants.js"></script>
+<script src="js/vue-app.js"></script>
